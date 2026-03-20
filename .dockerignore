@@ -1,0 +1,21 @@
+# .NET
+bin/
+obj/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+docker-compose.yml
+docker-compose.override.yml
+
+# IDE
+.vs/
+.vscode/
+
+# OS
+.DS_Store
+
+# logs
+*.log
