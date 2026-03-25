@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ticket-system-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/april23-artist/aspnet-k8s-demo.git'
+    targetRevision: main
+    path: deploy/ticket-system
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-prod.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: prod
+  syncPolicy:
+    automated: # 開啟自動同步
+      prune: true # 如果 Git 刪除了檔案，K8s 也同步刪除
+      selfHeal: true # 如果有人手動改了 K8s，Argo CD 會把它改回來

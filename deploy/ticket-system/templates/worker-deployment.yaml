@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: demo-worker
-  namespace: "{{ .Values.namespace }}"
 spec:
   replicas: 1
   selector:
@@ -15,7 +14,7 @@ spec:
     spec:
       containers:
         - name: demo-worker
-          image: "{{ .Values.image.dockerhub-user }}/demo-worker:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.dockerhubUser }}/demo-worker:{{ .Values.image.tag }}"
           imagePullPolicy: IfNotPresent
           env:
             - name: Redis__ConnectionString
