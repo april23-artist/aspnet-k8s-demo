@@ -2,6 +2,6 @@ namespace: dev
 
 image:
   dockerhub-user: allenart
-  tag: latest
+  tag: 2b604025e711189e08bdd524040e8475ff6e891b
 
 environment: Development
