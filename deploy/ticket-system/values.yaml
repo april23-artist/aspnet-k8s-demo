@@ -1,0 +1,7 @@
+namespace: dev
+
+image:
+  dockerhub-user: allenart
+  tag: latest
+
+environment: Development
