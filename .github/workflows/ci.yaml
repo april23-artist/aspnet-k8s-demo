@@ -7,6 +7,9 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 允許寫入內容（包含 git push）
+      
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -34,6 +37,12 @@ jobs:
           push: true
           # 使用 Commit ID 作為唯一標籤，避免使用 latest 導致更新不明確
           tags: ${{ secrets.DOCKER_USERNAME }}/demo-worker:${{ github.sha }}
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        # 確保 checkout 時使用的是具有寫入權限的 token
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # 【關鍵步驟】更新 Helm 的 values.yaml 裡的 Tag
       - name: Update Image Tag in Helm Chart
