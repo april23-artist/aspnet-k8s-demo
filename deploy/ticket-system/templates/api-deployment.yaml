@@ -27,12 +27,12 @@ spec:
           livenessProbe: # 檢查 Pod 是否還活著，失敗會重啟 Pod
             httpGet:
               path: /healthz
-              port: 80
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe: # 檢查 Pod 是否準備好，失敗會暫時從 Service 剔除
             httpGet:
               path: /healthz
-              port: 80
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
