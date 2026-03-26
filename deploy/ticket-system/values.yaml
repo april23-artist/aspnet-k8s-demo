@@ -1,6 +1,6 @@
 image:
   dockerhubUser: allenart
-  tag: 809cae0fd75f0a432a98a39d0b609bd15b1c1ba2
+  tag: 509680d08ab3102f731f9e1fcef0e23e646c4666
 
 ingress:
   host: dev-allen.demoapi.com
