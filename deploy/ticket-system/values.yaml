@@ -1,5 +1,5 @@
 image:
   dockerhubUser: allenart
-  tag: e7463344fbe50a0b22a7f4c8e00aef0e77535ba0
+  tag: 16f3c47224d6e7d1547bf2d809516adcc0b7f5d9
 
 environment: Development
