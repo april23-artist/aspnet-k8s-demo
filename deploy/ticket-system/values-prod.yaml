@@ -1,2 +1,2 @@
-namespace: prod
-environment: Production
+ingress:
+  host: allen.demoapi.com
