@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,13 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     return ConnectionMultiplexer.Connect(configuration);
 });
 
+// 1. 註冊健康檢查服務
+builder.Services.AddHealthChecks()
+    // 檢查應用程式是否存活
+    .AddCheck("self", () => HealthCheckResult.Healthy())
+    // 檢查 Redis 連線是否正常
+    .AddRedis(builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379", name: "redis");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,5 +41,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// 2. 設定健康檢查的 Endpoint
+// 外部監控通常看 /healthz
+app.MapHealthChecks("/healthz");
 
 app.Run();

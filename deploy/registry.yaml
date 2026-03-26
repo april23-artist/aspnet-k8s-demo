@@ -25,10 +25,35 @@ metadata:
   name: local-registry
   namespace: kube-system
 spec:
-  type: NodePort
   ports:
     - port: 5000
       targetPort: 5000
-      nodePort: 30500 # 我們固定用 30500
+      protocol: TCP
   selector:
     app: local-registry
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: local-registry-ingress
+  namespace: kube-system
+  annotations:
+    # 【關鍵】設定為 0 表示不限制上傳大小
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    # 【建議補充】因為 push 大檔案需要時間，建議同時調高超時限制
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: allen.local-registry.com
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: local-registry
+                port:
+                  number: 5000
+            path: /
