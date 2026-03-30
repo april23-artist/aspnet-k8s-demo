@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using StackExchange.Redis;
 
@@ -43,7 +44,17 @@ app.UseAuthorization();
 app.MapControllers();
 
 // 2. 設定健康檢查的 Endpoint
-// 外部監控通常看 /healthz
-app.MapHealthChecks("/healthz");
+// 外部監控看 /healthz
+app.MapHealthChecks("/healthz/live", new HealthCheckOptions
+{
+    // 只要程式沒死，不檢查 Redis (Liveness)
+    Predicate = (check) => check.Name == "self"
+});
+
+app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
+{
+    // 所有的檢查都要過，才算 Ready 接收流量 (Readiness)
+    Predicate = (_) => true
+});
 
 app.Run();
