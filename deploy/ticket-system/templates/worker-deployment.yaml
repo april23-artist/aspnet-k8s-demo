@@ -17,5 +17,5 @@ spec:
           image: "{{ .Values.image.dockerhubUser }}/demo-worker:{{ .Values.image.tag }}"
           imagePullPolicy: IfNotPresent
           env:
-            - name: Redis__ConnectionString
+            - name: ConnectionStrings__Redis
               value: "redis-service:6379"
