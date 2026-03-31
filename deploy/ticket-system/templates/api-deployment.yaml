@@ -19,7 +19,20 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: Redis__ConnectionString
+            - name: ConnectionStrings__Redis
               value: "redis-service:6379"
             - name: ASPNETCORE_ENVIRONMENT
               value: "{{ .Values.environment }}"
+          # 健康檢查設定
+          livenessProbe: # 檢查 Pod 是否還活著，失敗會重啟 Pod
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe: # 檢查 Pod 是否準備好，失敗會暫時從 Service 剔除
+            httpGet:
+              path: /healthz/ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5

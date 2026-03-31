@@ -21,17 +21,27 @@ namespace Demo.Worker
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var result = await _redis.ListRightPopAsync("ticket_queue");
-
-                if (result.IsNullOrEmpty)
+                try
                 {
-                    await Task.Delay(100); // 避免 busy loop
-                    continue;
+                    var ticket = await _redis.ListRightPopAsync("ticket_queue");
+                    if (ticket.IsNullOrEmpty)
+                    {
+                        await Task.Delay(100); // 避免 busy loop
+                        continue;
+                    }
+
+                    /* 處理購票 */
+
+                    await Task.Delay(1000, stoppingToken);
+                    var request = JsonSerializer.Deserialize<TicketRequest>(ticket!);
+                    await ProcessOrder(request!);
                 }
-
-                var request = JsonSerializer.Deserialize<TicketRequest>(result!);
-
-                await ProcessOrder(request!);
+                catch (RedisConnectionException ex)
+                {
+                    // 這裡只紀錄日誌，不拋出異常
+                    _logger.LogError("Redis 連不上，等待重試... {Message}", ex.Message);
+                    await Task.Delay(5000, stoppingToken);
+                }
             }
         }
 

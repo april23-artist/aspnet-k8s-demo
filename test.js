@@ -2,7 +2,7 @@ import http from "k6/http";
 import { sleep } from "k6";
 
 export default function () {
-  const url = "http://localhost:5000/api/ticket/order";
+  const url = "http://dev-allen.demoapi.com/api/ticket/order";
   const payload = JSON.stringify({
     userId: `user_${__ITER}`,
     eventId: "concert_2026",
