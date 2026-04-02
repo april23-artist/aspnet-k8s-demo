@@ -9,18 +9,26 @@ namespace Demo.Api.Controllers
     [ApiController]
     public class TicketController : ControllerBase
     {
+        private readonly ILogger<TicketController> _logger;
         private readonly IDatabase _redis;
 
-        public TicketController(IConnectionMultiplexer redis)
+        public TicketController(ILogger<TicketController> logger, IConnectionMultiplexer redis)
         {
+            _logger = logger;
             _redis = redis.GetDatabase();
         }
 
         [HttpPost("order")]
         public async Task<IActionResult> Order([FromBody] TicketRequest request)
         {
-            request.RequestTime = DateTime.UtcNow;
+            _logger.LogInformation(
+                "訂單請求：使用者 {UserId}, 活動 {Event}, 數量 {Quantity}",
+                request.UserId,
+                request.EventId,
+                request.Quantity
+            );
 
+            request.RequestTime = DateTime.UtcNow;
             var payload = JsonSerializer.Serialize(request);
 
             await _redis.ListLeftPushAsync("ticket_queue", payload);

@@ -1,9 +1,18 @@
 using Demo.Worker;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
+using Serilog.Formatting.Json;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName() // 紀錄是哪台機器
+    .Enrich.WithThreadId()    // 紀錄執行緒
+    .WriteTo.Console(new JsonFormatter())
+    .CreateLogger();
 
 // 讀取設定檔，如果沒設定就預設 localhost
 var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";

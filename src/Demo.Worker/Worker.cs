@@ -17,7 +17,7 @@ namespace Demo.Worker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Worker started");
+            _logger.LogInformation("開始處理訂單");
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -39,7 +39,7 @@ namespace Demo.Worker
                 catch (RedisConnectionException ex)
                 {
                     // 這裡只紀錄日誌，不拋出異常
-                    _logger.LogError("Redis 連不上，等待重試... {Message}", ex.Message);
+                    _logger.LogError("Redis 連線失敗，等待重試... {Message}", ex.Message);
                     await Task.Delay(5000, stoppingToken);
                 }
             }
@@ -51,7 +51,7 @@ namespace Demo.Worker
             await Task.Delay(50);
 
             _logger.LogInformation(
-                "Processed order: User={UserId}, Event={EventId}, Qty={Qty}",
+                "訂單處理 : 使用者 {UserId}, 活動 {EventId}, 數量 {Quantity}",
                 request.UserId,
                 request.EventId,
                 request.Quantity
