@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Prometheus;
 using Serilog;
 using Serilog.Formatting.Json;
 using StackExchange.Redis;
@@ -30,7 +31,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     return ConnectionMultiplexer.Connect(configuration);
 });
 
-// 1. 註冊健康檢查服務
+// 註冊健康檢查服務
 builder.Services.AddHealthChecks()
     // 檢查應用程式是否存活
     .AddCheck("self", () => HealthCheckResult.Healthy())
@@ -52,7 +53,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// 2. 設定健康檢查的 Endpoint
+// 設定健康檢查的 Endpoint
 // 外部監控看 /healthz
 app.MapHealthChecks("/healthz/live", new HealthCheckOptions
 {
@@ -65,5 +66,11 @@ app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
     // 所有的檢查都要過，才算 Ready 接收流量 (Readiness)
     Predicate = (_) => true
 });
+
+// 開啟 HTTP 請求數據的自動追蹤 (例如：請求耗時、次數)
+app.UseHttpMetrics();
+
+// 對外暴露 /metrics 端點，供 Prometheus 抓取資料
+app.MapMetrics();
 
 app.Run();
